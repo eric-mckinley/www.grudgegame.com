@@ -1,0 +1,538 @@
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
+
+    <script src="js/myson_store.js"></script>
+    <script src="js/chart_create.js"></script>
+    <script src="js/chart_1.js"></script>
+    <script src="js/chart_2.js"></script>
+    <script src="js/chart_3.js"></script>
+
+    <script src="js/jscolor.js"></script>
+
+    <title>1v1</title>
+    <style type="text/css">
+        .win {
+            background-color: #9acd32;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="create-area" style="display: none;">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading"><h3 class="panel-title">Create Grudge Game tracker</h3></div>
+                    <div class="panel-body" id="signup">
+
+                        <form class="form-horizontal" onsubmit="return submitForm();">
+
+                            <div class="form-group">
+
+                                <div class="col-sm-12">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                             &nbsp;&nbsp;&nbsp;&nbsp;League Name&nbsp;&nbsp;&nbsp;&nbsp;
+                                        </span>
+                                        <input class="form-control" id="leagueName" placeholder="LEAGUE NAME">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+
+                                <div class="col-sm-12">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                             Games for Set Win
+                                        </span>
+                                        <select class="form-control" id="gamesPerSet">
+                                            <option selected>2</option>
+                                            <option value="1">3</option>
+                                            <option value="2">4</option>
+                                            <option value="3">5</option>
+                                            <option value="3">6</option>
+                                            <option value="3">7</option>
+                                            <option value="3">8</option>
+                                            <option value="3">9</option>
+                                            <option value="3">10</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+
+                                <div class="col-sm-6">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                             &nbsp;&nbsp;&nbsp;&nbsp;Player 1 Name&nbsp;&nbsp;&nbsp;
+                                        </span>
+                                        <input class="form-control" id="player1Name" placeholder="Player 1'S Name">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                             &nbsp;&nbsp;&nbsp;&nbsp;Player 2 Name&nbsp;&nbsp;&nbsp;
+                                        </span>
+                                        <input class="form-control" id="player2Name" placeholder="Player 2'S Name">
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="collapse" id="collapseExample">
+                                <div class="form-group">
+
+                                    <div class="col-sm-6">
+                                        <div class="input-group">
+                                        <span class="input-group-addon">
+                                             &nbsp;&nbsp;&nbsp;&nbsp;Color Player 1&nbsp;&nbsp;&nbsp;&nbsp;
+                                        </span>
+                                            <div id="cp1" class="colorpicker-component">
+                                                <input type="text" id="player1Color" value="#617BBB"
+                                                       class="jscolor form-control"/>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="input-group">
+                                        <span class="input-group-addon">
+                                              &nbsp;&nbsp;&nbsp;&nbsp;Color Player 2&nbsp;&nbsp;&nbsp;&nbsp;
+                                        </span>
+                                            <div id="cp2" class="colorpicker-component">
+                                                <input type="text" id="player2Color" value="#CADD61"
+                                                       class="jscolor form-control"/>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <button class="btn btn-primary" type="button" data-toggle="collapse"
+                                            data-target="#collapseExample" aria-expanded="false"
+                                            aria-controls="collapseExample">
+                                        ADVANCED SETTINGS
+                                    </button>
+                                </div>
+                                <div class="col-sm-8">
+                                    <button type="submit" class="btn btn-success">CREATE LEAGUE</button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.row -->
+    <div id="display-area" style="display: none;">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-success">
+                    <div class="panel-heading"><h3 class="panel-title">Next Match Result</h3></div>
+                    <div class="panel-body" id="enterScore">
+                        <div class="row">
+
+                            <div class="col-lg-4">
+                                <button type="button" id="player1Win" class="btn btn-block btn-success"
+                                        onclick="addPlayer1Win();"></button>
+                            </div>
+                            <div class="col-lg-4">
+                                <button type="button" id="player2Win" class="btn btn-block btn-success"
+                                        onclick="addPlayer2Win();"></button>
+                            </div>
+                            <div class="col-lg-4">
+                                <button type="button" id="player3Win" class="btn btn-block btn-danger"
+                                        onclick="deleteScore();">Undo Last Score</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading"><h3 class="panel-title">Overall Scores</h3></div>
+                    <div class="panel-body" id="overallTables">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading"><h3 class="panel-title">Current League</h3></div>
+                    <div class="panel-body" id="currentLeagueTable">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading"><h3 class="panel-title">Previous Leagues</h3></div>
+                    <div class="panel-body" id="leagueTables">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="panel panel-primary" id="chart1Panel" style="display: none;">
+                    <div class="panel-heading"><h3 id="chart1Title" class="panel-title"></h3></div>
+                    <div class="panel-body">
+                        <canvas id="chart1"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="panel panel-primary" id="chart2Panel" style="display: none;">
+                    <div class="panel-heading"><h3 id="chart2Title" class="panel-title"></h3></div>
+                    <div class="panel-body">
+                        <canvas id="chart2"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="panel panel-primary" id="chart3Panel" style="display: none;">
+                    <div class="panel-heading"><h3 class="panel-title" id="chart3Title"></h3></div>
+                    <div class="panel-body">
+                        <canvas id="chart3"></canvas>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="panel panel-primary" id="chart4Panel" style="display: none;">
+                    <div class="panel-heading"><h3 class="panel-title" id="chart4Title"></h3></div>
+                    <div class="panel-body">
+                        <canvas id="chart4"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+
+
+<script type="text/javascript">
+
+    var maxGamesPerSet = 0;
+    var playerA = '?';
+    var playerB = '?';
+    var winMatchesForSet = 0;
+
+    var matchId = getUrlParameter('matchId');
+
+    if (matchId.length > 0) {
+        getScore(matchId, showResults, showCreate);
+    }
+    else {
+        showCreate();
+    }
+
+    function showCreate() {
+        var createDiv = document.getElementById("create-area");
+        var displayDiv = document.getElementById("display-area");
+        createDiv.style.display = "block";
+        displayDiv.style.display = "none";
+    }
+
+    function showResults(matchId, results) {
+
+        document.getElementById("player1Win").innerHTML = results.playerA + " won";
+        document.getElementById("player2Win").innerHTML = results.playerB + " won";
+
+        clearChildren('currentLeagueTable');
+        clearChildren('leagueTables');
+        clearChildren('overallTables');
+
+        var createDiv = document.getElementById("create-area");
+        var displayDiv = document.getElementById("display-area");
+        createDiv.style.display = "none";
+        displayDiv.style.display = "block";
+
+        createChart(1, results);
+        createChart(2, results);
+        createChart(3, results);
+
+        maxGamesPerSet = (results.config.winMatchesForSet * 2) - 1;
+        playerA = results.playerA;
+        playerB = results.playerB;
+        winMatchesForSet = results.config.winMatchesForSet;
+
+        var matches = results.matches;
+
+        var currentGameWinsPlayerA = 0;
+        var currentGameWinsPlayerB = 0;
+        var setWinsPlayerA = 0;
+        var setWinsPlayerB = 0;
+
+        var gamesA = createGames();
+        var gamesB = createGames();
+        var gamesTotalA = 0;
+        var gamesTotalB = 0;
+
+
+        for (var i = 0, gi = 0; i < matches.length; i += 1, gi += 1) {
+            if (matches[i].scorePlayerA > matches[i].scorePlayerB) {
+                gamesTotalA++;
+                currentGameWinsPlayerA++;
+
+                gamesA[gi] = 1;
+                if (winMatchesForSet === currentGameWinsPlayerA) {
+                    setWinsPlayerA++;
+                    addLeagueTable('leagueTables', gamesA, gamesB, currentGameWinsPlayerA, currentGameWinsPlayerB);
+                    gamesA = createGames();
+                    gamesB = createGames();
+                    gi = -1;
+                    currentGameWinsPlayerA = 0;
+                    currentGameWinsPlayerB = 0;
+                }
+            }
+            else {
+                gamesTotalB++;
+
+                currentGameWinsPlayerB++;
+
+                gamesB[gi] = 1;
+                if (winMatchesForSet === currentGameWinsPlayerB) {
+                    setWinsPlayerB++;
+                    addLeagueTable('leagueTables', gamesA, gamesB, currentGameWinsPlayerA, currentGameWinsPlayerB);
+                    gamesA = createGames();
+                    gamesB = createGames();
+                    gi = -1;
+                    currentGameWinsPlayerA = 0;
+                    currentGameWinsPlayerB = 0;
+                }
+            }
+        }
+        addLeagueTable('currentLeagueTable', gamesA, gamesB, currentGameWinsPlayerA, currentGameWinsPlayerB);
+        addTotalsTable(gamesTotalA, gamesTotalB, setWinsPlayerA, setWinsPlayerB);
+    }
+
+    function submitForm() {
+        var leagueName = document.getElementById('leagueName').value;
+        var gamesPerSet = document.getElementById('gamesPerSet').value;
+        var player1Name = document.getElementById('player1Name').value;
+        var player2Name = document.getElementById('player2Name').value;
+        var player1Color = document.getElementById('player1Color').value;
+        var player2Color = document.getElementById('player2Color').value;
+
+        var leagueData = {
+            "leagueName": leagueName,
+            "playerA": player1Name,
+            "playerB": player2Name,
+            "config": {
+                "winMatchesForSet": parseInt(gamesPerSet),
+                "colorA": player1Color,
+                "colorB": player2Color
+            },
+            "matches": []
+        };
+        createScores(leagueData, showResults);
+        return false;
+    }
+
+    function isBlank(str) {
+        return (!str || /^\s*$/.test(str));
+    }
+
+    function clearChildren(area) {
+        var tablearea = document.getElementById(area);
+        while (tablearea.hasChildNodes()) {
+            tablearea.removeChild(tablearea.lastChild);
+        }
+    }
+
+    function createGames() {
+
+        var ganes = [];
+        for (var i = 0; i < maxGamesPerSet; i++) {
+            ganes[i] = 0;
+        }
+        return ganes;
+    }
+
+    function addLeagueTable(area, playerAGames, playerBGames, playerAWins, playerBWins) {
+        var tablearea = document.getElementById(area);
+        var tableDiv = document.createElement('div');
+        tableDiv.setAttribute('class', 'row');
+
+        var table = document.createElement('table');
+        table.setAttribute('class', 'table table-striped table-bordered');
+
+        var thead = document.createElement('thead');
+        thead.setAttribute('class', 'thead-dark');
+        var trH = document.createElement('tr');
+        trH.appendChild(document.createElement('th'));
+        trH.cells[0].appendChild(document.createTextNode('Player'));
+        for (var i = 0; i < maxGamesPerSet; i++) {
+            trH.appendChild(document.createElement('th'));
+            trH.cells[1 + i].appendChild(document.createTextNode('' + (i + 1)));
+        }
+        trH.appendChild(document.createElement('th'));
+        trH.cells[1 + maxGamesPerSet].appendChild(document.createTextNode('Winner'));
+        thead.appendChild(trH);
+        table.appendChild(thead);
+
+        var tbody = document.createElement('tbody');
+
+
+        var trA = document.createElement('tr');
+        var trB = document.createElement('tr');
+        trA.appendChild(document.createElement('td'));
+        trA.cells[0].appendChild(document.createTextNode(playerA));
+        trB.appendChild(document.createElement('td'));
+        trB.cells[0].appendChild(document.createTextNode(playerB));
+        for (var i = 0; i < maxGamesPerSet; i++) {
+            trA.appendChild(document.createElement('td'));
+            if (playerAGames[i] === 1) {
+                trA.cells[1 + i].setAttribute('class', 'win');
+            }
+        }
+        for (var i = 0; i < maxGamesPerSet; i++) {
+            trB.appendChild(document.createElement('td'));
+            if (playerBGames[i] === 1) {
+                trB.cells[1 + i].setAttribute('class', 'win');
+            }
+        }
+        trA.appendChild(document.createElement('td'));
+        trB.appendChild(document.createElement('td'));
+        if (playerAWins === winMatchesForSet) {
+            trA.cells[1 + maxGamesPerSet].setAttribute('class', 'win');
+        }
+        if (playerBWins === winMatchesForSet) {
+            trB.cells[1 + maxGamesPerSet].setAttribute('class', 'win');
+        }
+        trA.cells[1 + maxGamesPerSet].appendChild(document.createTextNode(playerAWins));
+        trB.cells[1 + maxGamesPerSet].appendChild(document.createTextNode(playerBWins));
+
+        tbody.appendChild(trA);
+        tbody.appendChild(trB);
+        table.appendChild(tbody);
+
+        tablearea.appendChild(table);
+    }
+
+    function addTotalsTable(playerAGames, playerBGames, playerASets, playerBSets) {
+        var tablearea = document.getElementById('overallTables');
+
+        var tableDiv = document.createElement('div');
+        tableDiv.setAttribute('class', 'row');
+
+        var table = document.createElement('table');
+        table.setAttribute('class', 'table table-striped table-bordered');
+
+        var thead = document.createElement('thead');
+        thead.setAttribute('class', 'thead-dark');
+        var trH = document.createElement('tr');
+        trH.appendChild(document.createElement('th'));
+        trH.cells[0].appendChild(document.createTextNode('Player'));
+        trH.appendChild(document.createElement('th'));
+        trH.cells[1].appendChild(document.createTextNode('Total Games'));
+        trH.appendChild(document.createElement('th'));
+        trH.cells[2].appendChild(document.createTextNode('Total Sets'));
+
+        thead.appendChild(trH);
+        table.appendChild(thead);
+
+        var tbody = document.createElement('tbody');
+
+        var trA = document.createElement('tr');
+        var trB = document.createElement('tr');
+        trA.appendChild(document.createElement('td'));
+        trA.cells[0].appendChild(document.createTextNode(playerA));
+        trB.appendChild(document.createElement('td'));
+        trB.cells[0].appendChild(document.createTextNode(playerB));
+
+        trA.appendChild(document.createElement('td'));
+        trB.appendChild(document.createElement('td'));
+        trA.appendChild(document.createElement('td'));
+        trB.appendChild(document.createElement('td'));
+        trA.cells[1].appendChild(document.createTextNode(playerAGames));
+        trB.cells[1].appendChild(document.createTextNode(playerBGames));
+        trA.cells[2].appendChild(document.createTextNode(playerASets));
+        trB.cells[2].appendChild(document.createTextNode(playerBSets));
+
+        tbody.appendChild(trA);
+        tbody.appendChild(trB);
+
+        table.appendChild(tbody);
+        tablearea.appendChild(table);
+    }
+
+    function addPlayer1Win() {
+        addScore(getUrlParameter('matchId'), 1, 0, showResults);
+    }
+
+    function addPlayer2Win() {
+        addScore(getUrlParameter('matchId'), 0, 1, showResults);
+    }
+
+    function deleteScore() {
+        removeScore(getUrlParameter('matchId'), showResults);
+    }
+
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+</script>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+
+</html>
