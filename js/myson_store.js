@@ -27,8 +27,7 @@ function getScore(binId, callbackSuccess, callbackFailure) {
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             var storeData = JSON.parse(xhr.responseText);
-            convertData(storeData);
-            callbackSuccess(binId, storeData);
+            callbackSuccess(binId, convertData(storeData));
         }
         else if (xhr.readyState === 4) {
             callbackFailure();
@@ -87,13 +86,15 @@ function convertData(storeData) {
 
     var converted = JSON.parse(JSON.stringify(storeData)); //deepcopy
     converted.leagues = [];
+    converted.gamesTotalA = 0;
+    converted.gamesTotalB = 0;
+    converted.leaguesTotalA = 0;
+    converted.leaguesTotalB = 0;
 
      var   maxGamesPerSet = (storeData.config.winMatchesForSet * 2) - 1;
-      var      winMatchesForSet = storeData.config.winMatchesForSet;
+      var   winMatchesForSet = storeData.config.winMatchesForSet;
     var matches = storeData.matches;
 
-        var gamesTotalA = 0;
-        var gamesTotalB = 0;
         var currentGameWinsPlayerA = 0;
         var currentGameWinsPlayerB = 0;
 
@@ -101,13 +102,16 @@ function convertData(storeData) {
 
         for (var i = 0, gi = 0; i < matches.length; i += 1, gi += 1) {
             if (matches[i].scorePlayerA > matches[i].scorePlayerB) {
-                gamesTotalA++;
+                converted.gamesTotalA = converted.gamesTotalA +1;
+
                 currentGameWinsPlayerA++;
 
                 league.gamesPlayerA[gi] = 1;
                 if (winMatchesForSet === currentGameWinsPlayerA) {
+
                     league.playerAWins = true;
                     league.playerBWins = false;
+                    converted.leaguesTotalA = converted.leaguesTotalA +1;
 
                     converted.leagues.push(league);
                     league = createLeague(maxGamesPerSet);
@@ -117,7 +121,7 @@ function convertData(storeData) {
                 }
             }
             else {
-                gamesTotalB++;
+                converted.gamesTotalB = converted.gamesTotalB +1;
 
                 currentGameWinsPlayerB++;
 
@@ -125,6 +129,7 @@ function convertData(storeData) {
                 if (winMatchesForSet === currentGameWinsPlayerB) {
                     league.playerAWins = false;
                     league.playerBWins = true;
+                    converted.leaguesTotalB = converted.leaguesTotalB +1;
 
                     converted.leagues.push(league);
                     league = createLeague(maxGamesPerSet);
@@ -136,11 +141,11 @@ function convertData(storeData) {
         }
         converted.leagues.push(league);
         console.log(converted);
+        return converted;
 }
 
 
 function createLeague(maxGamesPerSet){
-console.log('lgggg cREATED')
     var league = {
         gamesPlayerA: createGames_(maxGamesPerSet),
         gamesPlayerB: createGames_(maxGamesPerSet)
@@ -151,13 +156,9 @@ console.log('lgggg cREATED')
 
 
 function createGames_(maxGamesPerSet) {
-console.log('games cREATED')
-
     var games = [];
     for (var i = 0; i < maxGamesPerSet; i++) {
         games[i] = 0;
     }
-
-        console.log(games);
     return games;
 }
