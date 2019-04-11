@@ -1,4 +1,3 @@
-
 var storeURL = 'https://api.myjson.com/bins';
 
 function createScores(data, callbackSuccess) {
@@ -10,7 +9,7 @@ function createScores(data, callbackSuccess) {
         if (xhr.readyState === 4 && xhr.status === 201) {
             var created = JSON.parse(xhr.responseText);
             var n = created.uri.lastIndexOf("/");
-            var binId = created.uri.substr(n +1);
+            var binId = created.uri.substr(n + 1);
             console.log("Created league store: " + binId);
             window.open('?matchId=' + binId);
         }
@@ -21,7 +20,7 @@ function createScores(data, callbackSuccess) {
 
 function getScore(binId, callbackSuccess, callbackFailure) {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', storeURL +'/' + binId, true);
+    xhr.open('GET', storeURL + '/' + binId, true);
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
     xhr.onreadystatechange = function () {
@@ -38,15 +37,15 @@ function getScore(binId, callbackSuccess, callbackFailure) {
 
 function addScore(binId, scoreA, scoreB, callbackSuccess) {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', storeURL +'/' + binId, true);
+    xhr.open('GET', storeURL + '/' + binId, true);
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             var storeData = JSON.parse(xhr.responseText);
-            storeData.matches.push({"scorePlayerA":scoreA,"scorePlayerB":scoreB});
+            storeData.matches.push({"scorePlayerA": scoreA, "scorePlayerB": scoreB});
             saveScores(binId, storeData);
-            callbackSuccess(binId, storeData);
+            callbackSuccess(binId, convertData(storeData));
         }
     };
     xhr.send();
@@ -54,7 +53,7 @@ function addScore(binId, scoreA, scoreB, callbackSuccess) {
 
 function removeScore(binId, callbackSuccess) {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', storeURL +'/' + binId, true);
+    xhr.open('GET', storeURL + '/' + binId, true);
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
     xhr.onreadystatechange = function () {
@@ -62,7 +61,7 @@ function removeScore(binId, callbackSuccess) {
             var storeData = JSON.parse(xhr.responseText);
             storeData.matches.pop();
             saveScores(binId, storeData);
-            callbackSuccess(binId, storeData);
+            callbackSuccess(binId, convertData(storeData));
         }
     };
     xhr.send();
@@ -70,7 +69,7 @@ function removeScore(binId, callbackSuccess) {
 
 function saveScores(binId, storeData) {
     var xhr = new XMLHttpRequest();
-    xhr.open('PUT', storeURL +'/' + binId, true);
+    xhr.open('PUT', storeURL + '/' + binId, true);
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
     xhr.onreadystatechange = function () {
@@ -91,71 +90,79 @@ function convertData(storeData) {
     converted.leaguesTotalA = 0;
     converted.leaguesTotalB = 0;
 
-     var   maxGamesPerSet = (storeData.config.winMatchesForSet * 2) - 1;
-      var   winMatchesForSet = storeData.config.winMatchesForSet;
+    var maxGamesPerSet = (storeData.config.winMatchesForSet * 2) - 1;
+    var winMatchesForSet = storeData.config.winMatchesForSet;
     var matches = storeData.matches;
 
-        var currentGameWinsPlayerA = 0;
-        var currentGameWinsPlayerB = 0;
+    var currentGameWinsPlayerA = 0;
+    var currentGameWinsPlayerB = 0;
 
-        var league = createLeague(maxGamesPerSet);
+    var league = createLeague(maxGamesPerSet);
 
-        for (var i = 0, gi = 0; i < matches.length; i += 1, gi += 1) {
-            if (matches[i].scorePlayerA > matches[i].scorePlayerB) {
-                converted.gamesTotalA = converted.gamesTotalA +1;
+    for (var i = 0, gi = 0; i < matches.length; i += 1, gi += 1) {
+        if (matches[i].scorePlayerA > matches[i].scorePlayerB) {
+            converted.gamesTotalA = converted.gamesTotalA + 1;
 
-                currentGameWinsPlayerA++;
+            currentGameWinsPlayerA++;
 
-                league.gamesPlayerA[gi] = 1;
-                if (winMatchesForSet === currentGameWinsPlayerA) {
+            league.gamesPlayerA[gi] = 1;
+            if (winMatchesForSet === currentGameWinsPlayerA) {
 
-                    league.playerAWins = true;
-                    league.playerBWins = false;
-                    converted.leaguesTotalA = converted.leaguesTotalA +1;
+                league.playerAWins = true;
+                league.playerAGames = currentGameWinsPlayerA;
+                league.playerBGames = currentGameWinsPlayerB;
+                converted.leaguesTotalA = converted.leaguesTotalA + 1;
 
-                    converted.leagues.push(league);
-                    league = createLeague(maxGamesPerSet);
-                    gi = -1;
-                    currentGameWinsPlayerA = 0;
-                    currentGameWinsPlayerB = 0;
-                }
-            }
-            else {
-                converted.gamesTotalB = converted.gamesTotalB +1;
-
-                currentGameWinsPlayerB++;
-
-                league.gamesPlayerB[gi] = 1;
-                if (winMatchesForSet === currentGameWinsPlayerB) {
-                    league.playerAWins = false;
-                    league.playerBWins = true;
-                    converted.leaguesTotalB = converted.leaguesTotalB +1;
-
-                    converted.leagues.push(league);
-                    league = createLeague(maxGamesPerSet);
-                    gi = -1;
-                    currentGameWinsPlayerA = 0;
-                    currentGameWinsPlayerB = 0;
-                }
+                converted.leagues.push(league);
+                league = createLeague(maxGamesPerSet);
+                gi = -1;
+                currentGameWinsPlayerA = 0;
+                currentGameWinsPlayerB = 0;
             }
         }
-        converted.leagues.push(league);
-        console.log(converted);
-        return converted;
+        else {
+            converted.gamesTotalB = converted.gamesTotalB + 1;
+
+            currentGameWinsPlayerB++;
+
+            league.gamesPlayerB[gi] = 1;
+            if (winMatchesForSet === currentGameWinsPlayerB) {
+                league.playerBWins = true;
+                league.playerAGames = currentGameWinsPlayerA;
+                league.playerBGames = currentGameWinsPlayerB;
+
+                converted.leaguesTotalB = converted.leaguesTotalB + 1;
+
+                converted.leagues.push(league);
+                league = createLeague(maxGamesPerSet);
+                gi = -1;
+                currentGameWinsPlayerA = 0;
+                currentGameWinsPlayerB = 0;
+            }
+        }
+    }
+    league.playerAGames = currentGameWinsPlayerA;
+    league.playerBGames = currentGameWinsPlayerB;
+    converted.leagues.push(league);
+    return converted;
 }
 
 
-function createLeague(maxGamesPerSet){
+function createLeague(maxGamesPerSet) {
     var league = {
-        gamesPlayerA: createGames_(maxGamesPerSet),
-        gamesPlayerB: createGames_(maxGamesPerSet)
-    };
+        gamesPlayerA: createGames(maxGamesPerSet),
+        gamesPlayerB: createGames(maxGamesPerSet),
+        maxGamesPerSet: maxGamesPerSet,
+        playerAWins: false,
+        playerBWins: false
+
+};
 
     return league;
 }
 
 
-function createGames_(maxGamesPerSet) {
+function createGames(maxGamesPerSet) {
     var games = [];
     for (var i = 0; i < maxGamesPerSet; i++) {
         games[i] = 0;

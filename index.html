@@ -23,16 +23,14 @@
 
     <script src="js/myson_store.js"></script>
     <script src="js/chart_create.js"></script>
-    <script src="js/chart_1.js"></script>
-    <script src="js/chart_2.js"></script>
-    <script src="js/chart_3.js"></script>
+    <script src="js/grudge_charts.js"></script>
 
     <script src="js/jscolor.js"></script>
 
-    <title>1v1</title>
+    <title>GrudgeGame</title>
     <style type="text/css">
         .win {
-            background-color: #9acd32;
+        background-color: #9acd32;
         }
 
     </style>
@@ -40,7 +38,14 @@
 <body>
 
 <div class="container">
+
+
+
+
     <div id="create-area" style="display: none;">
+        <div class="page-header">
+            <h1>Grudge Game <small>Track the history</small></h1>
+        </div>
         <div class="row">
             <div class="col-lg-12">
                 <div class="panel panel-primary">
@@ -156,6 +161,11 @@
     <!-- /.row -->
     <div id="display-area" style="display: none;">
 
+
+        <div class="page-header">
+            <h1><span id="leagueHeader"></span> <small><span id="subLeagueHeader"></span></small></h1>
+        </div>
+
         <div class="row">
             <div class="col-lg-12">
                 <div class="panel panel-success">
@@ -200,16 +210,6 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="panel panel-primary">
-                    <div class="panel-heading"><h3 class="panel-title">Previous Leagues</h3></div>
-                    <div class="panel-body" id="leagueTables">
-
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <div class="row">
             <div class="col-lg-6">
@@ -249,6 +249,18 @@
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading"><h3 class="panel-title">Previous Leagues</h3></div>
+                    <div class="panel-body" id="leagueTables">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -283,6 +295,8 @@
 
         document.getElementById("player1Win").innerHTML = results.playerA + " won";
         document.getElementById("player2Win").innerHTML = results.playerB + " won";
+        document.getElementById("leagueHeader").innerHTML = results.leagueName;
+        document.getElementById("subLeagueHeader").innerHTML = "www.grudgegame.com?matchId=" +matchId;
 
         clearChildren('currentLeagueTable');
         clearChildren('leagueTables');
@@ -293,63 +307,18 @@
         createDiv.style.display = "none";
         displayDiv.style.display = "block";
 
-        createChart(1, results);
-        createChart(2, results);
-        createChart(3, results);
+        createCharts(results);
 
-        maxGamesPerSet = (results.config.winMatchesForSet * 2) - 1;
         playerA = results.playerA;
         playerB = results.playerB;
-        winMatchesForSet = results.config.winMatchesForSet;
 
-        var matches = results.matches;
+        addLeagueTable('currentLeagueTable',playerA, playerB, results.leagues[results.leagues.length -1]);
+        for (il = results.leagues.length -2; il >= 0; il--) {
 
-        var currentGameWinsPlayerA = 0;
-        var currentGameWinsPlayerB = 0;
-        var setWinsPlayerA = 0;
-        var setWinsPlayerB = 0;
-
-        var gamesA = createGames();
-        var gamesB = createGames();
-        var gamesTotalA = 0;
-        var gamesTotalB = 0;
-
-
-        for (var i = 0, gi = 0; i < matches.length; i += 1, gi += 1) {
-            if (matches[i].scorePlayerA > matches[i].scorePlayerB) {
-                gamesTotalA++;
-                currentGameWinsPlayerA++;
-
-                gamesA[gi] = 1;
-                if (winMatchesForSet === currentGameWinsPlayerA) {
-                    setWinsPlayerA++;
-                    addLeagueTable('leagueTables', gamesA, gamesB, currentGameWinsPlayerA, currentGameWinsPlayerB);
-                    gamesA = createGames();
-                    gamesB = createGames();
-                    gi = -1;
-                    currentGameWinsPlayerA = 0;
-                    currentGameWinsPlayerB = 0;
-                }
-            }
-            else {
-                gamesTotalB++;
-
-                currentGameWinsPlayerB++;
-
-                gamesB[gi] = 1;
-                if (winMatchesForSet === currentGameWinsPlayerB) {
-                    setWinsPlayerB++;
-                    addLeagueTable('leagueTables', gamesA, gamesB, currentGameWinsPlayerA, currentGameWinsPlayerB);
-                    gamesA = createGames();
-                    gamesB = createGames();
-                    gi = -1;
-                    currentGameWinsPlayerA = 0;
-                    currentGameWinsPlayerB = 0;
-                }
-            }
+            addLeagueTable('leagueTables',playerA, playerB, results.leagues[il]);
         }
-        addLeagueTable('currentLeagueTable', gamesA, gamesB, currentGameWinsPlayerA, currentGameWinsPlayerB);
-        addTotalsTable(gamesTotalA, gamesTotalB, setWinsPlayerA, setWinsPlayerB);
+        addTotalsTable(results);
+
     }
 
     function submitForm() {
@@ -386,16 +355,9 @@
         }
     }
 
-    function createGames() {
 
-        var ganes = [];
-        for (var i = 0; i < maxGamesPerSet; i++) {
-            ganes[i] = 0;
-        }
-        return ganes;
-    }
-
-    function addLeagueTable(area, playerAGames, playerBGames, playerAWins, playerBWins) {
+    function addLeagueTable(area, playerA, playerB, leagueData) {
+        var maxGames = leagueData.maxGamesPerSet;
         var tablearea = document.getElementById(area);
         var tableDiv = document.createElement('div');
         tableDiv.setAttribute('class', 'row');
@@ -408,12 +370,12 @@
         var trH = document.createElement('tr');
         trH.appendChild(document.createElement('th'));
         trH.cells[0].appendChild(document.createTextNode('Player'));
-        for (var i = 0; i < maxGamesPerSet; i++) {
+        for (var i = 0; i < maxGames; i++) {
             trH.appendChild(document.createElement('th'));
             trH.cells[1 + i].appendChild(document.createTextNode('' + (i + 1)));
         }
         trH.appendChild(document.createElement('th'));
-        trH.cells[1 + maxGamesPerSet].appendChild(document.createTextNode('Winner'));
+        trH.cells[1 + maxGames].appendChild(document.createTextNode('Winner'));
         thead.appendChild(trH);
         table.appendChild(thead);
 
@@ -426,28 +388,28 @@
         trA.cells[0].appendChild(document.createTextNode(playerA));
         trB.appendChild(document.createElement('td'));
         trB.cells[0].appendChild(document.createTextNode(playerB));
-        for (var i = 0; i < maxGamesPerSet; i++) {
+        for (var i = 0; i < leagueData.maxGamesPerSet; i++) {
             trA.appendChild(document.createElement('td'));
-            if (playerAGames[i] === 1) {
+            if (leagueData.gamesPlayerA[i] === 1) {
                 trA.cells[1 + i].setAttribute('class', 'win');
             }
         }
-        for (var i = 0; i < maxGamesPerSet; i++) {
+        for (var i = 0; i < maxGames; i++) {
             trB.appendChild(document.createElement('td'));
-            if (playerBGames[i] === 1) {
+            if (leagueData.gamesPlayerB[i] === 1) {
                 trB.cells[1 + i].setAttribute('class', 'win');
             }
         }
         trA.appendChild(document.createElement('td'));
         trB.appendChild(document.createElement('td'));
-        if (playerAWins === winMatchesForSet) {
-            trA.cells[1 + maxGamesPerSet].setAttribute('class', 'win');
+        if (leagueData.playerAWins) {
+            trA.cells[1 + maxGames].setAttribute('class', 'win');
         }
-        if (playerBWins === winMatchesForSet) {
-            trB.cells[1 + maxGamesPerSet].setAttribute('class', 'win');
+        if (leagueData.playerBWins) {
+            trB.cells[1 + maxGames].setAttribute('class', 'win');
         }
-        trA.cells[1 + maxGamesPerSet].appendChild(document.createTextNode(playerAWins));
-        trB.cells[1 + maxGamesPerSet].appendChild(document.createTextNode(playerBWins));
+        trA.cells[1 + maxGames].appendChild(document.createTextNode(leagueData.playerAGames));
+        trB.cells[1 + maxGames].appendChild(document.createTextNode(leagueData.playerBGames));
 
         tbody.appendChild(trA);
         tbody.appendChild(trB);
@@ -456,7 +418,7 @@
         tablearea.appendChild(table);
     }
 
-    function addTotalsTable(playerAGames, playerBGames, playerASets, playerBSets) {
+    function addTotalsTable(resultData) {
         var tablearea = document.getElementById('overallTables');
 
         var tableDiv = document.createElement('div');
@@ -483,18 +445,18 @@
         var trA = document.createElement('tr');
         var trB = document.createElement('tr');
         trA.appendChild(document.createElement('td'));
-        trA.cells[0].appendChild(document.createTextNode(playerA));
+        trA.cells[0].appendChild(document.createTextNode(resultData.playerA));
         trB.appendChild(document.createElement('td'));
-        trB.cells[0].appendChild(document.createTextNode(playerB));
+        trB.cells[0].appendChild(document.createTextNode(resultData.playerB));
 
         trA.appendChild(document.createElement('td'));
         trB.appendChild(document.createElement('td'));
         trA.appendChild(document.createElement('td'));
         trB.appendChild(document.createElement('td'));
-        trA.cells[1].appendChild(document.createTextNode(playerAGames));
-        trB.cells[1].appendChild(document.createTextNode(playerBGames));
-        trA.cells[2].appendChild(document.createTextNode(playerASets));
-        trB.cells[2].appendChild(document.createTextNode(playerBSets));
+        trA.cells[1].appendChild(document.createTextNode(resultData.gamesTotalA));
+        trB.cells[1].appendChild(document.createTextNode(resultData.gamesTotalB));
+        trA.cells[2].appendChild(document.createTextNode(resultData.leaguesTotalA));
+        trB.cells[2].appendChild(document.createTextNode(resultData.leaguesTotalB));
 
         tbody.appendChild(trA);
         tbody.appendChild(trB);
