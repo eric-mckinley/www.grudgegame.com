@@ -1,6 +1,7 @@
 # www.grudgegame.com
 Simlpes - static 1v1 score tracker website
 
+> Note: After a glorious 12 months, I didnt renew the domain.
 
 ### Suggest a Chart
 
