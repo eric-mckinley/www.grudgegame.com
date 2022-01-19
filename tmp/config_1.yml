@@ -1,0 +1,43 @@
+maxSize: 3
+parallelGroupConfigs:
+  - name: XYZ
+    maxSize: 2
+    rules:
+    - valueType: chart
+      ruleType: include
+      list:
+        - b
+        - c
+        - k
+    - valueType: namespace
+      ruleType: exclude
+      list:
+        - ns_a
+  - name: XYZx
+    maxSize: 7
+    rules:
+    - valueType: namespace
+      ruleType: exclude
+      list:
+        - ns_a
+
+#stagesGroups:
+#  - name: XYZ
+#    maxSize: 12
+#    maxExecutions: 2
+#    rules:
+#    - valueType: chart
+#      ruleType: include
+#      list:
+#        - a
+#        - d
+#        - e
+#        - i
+#        - j
+#  - name: ABC
+#    pauseWhenFailure: true
+#    rules:
+#    - valueType: chart
+#      ruleType: exclude
+#      list:
+#        - c
